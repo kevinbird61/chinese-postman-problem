@@ -89,7 +89,7 @@ int dfs(string src, string sink)
 {
     // traversal
     for(int i=0;i<ef[src].size();i++){
-        cout << "Current: " << ef[src].at(i)->head->name << "->" << ef[src].at(i)->tail->name << endl;
+        // cout << "Current: " << ef[src].at(i)->head->name << "->" << ef[src].at(i)->tail->name << endl;
         // check the edge is already existed or not
         if(find(route.begin(), route.end(), ef[src].at(i))==route.end()){
             route.push_back(ef[src].at(i));
@@ -100,23 +100,23 @@ int dfs(string src, string sink)
                     cout << route[i]->head->name << "--->" << route[i]->tail->name << endl;
                 }*/
                 if(!finish()){
-                    cout << "NOT END" << endl;
+                    // cout << "NOT END" << endl;
                     route.pop_back();
                     // go to next 
                     continue;
                 }
-                cout << "END" << endl;
+                //cout << "END" << endl;
                 return 0; // END
             }
             cout << ef[src].at(i)->head->name << "->" << ef[src].at(i)->tail->name << endl;
             // if END, then return; else: keep going
             if(dfs(ef[src].at(i)->tail->name, sink)){
                 // pop out the error one
-                cout << "SRC: " << src << ". POP, and continue..." << endl;
+                //cout << "SRC: " << src << ". POP, and continue..." << endl;
                 route.pop_back();
             } else {
                 // END
-                cout << "SRC: " << src << ". END, return..." << endl;
+                //cout << "SRC: " << src << ". END, return..." << endl;
                 return 0; // END, return 
             }
         }
@@ -127,7 +127,7 @@ int finish()
 {
     Edge *elist = nm->elist;
     while(elist!=NULL){
-        cout << elist->head->name << "=>" << elist->tail->name << ". Compare: " << (find(route.begin(), route.end(), elist)==route.end()) << endl;
+        // cout << elist->head->name << "=>" << elist->tail->name << ". Compare: " << (find(route.begin(), route.end(), elist)==route.end()) << endl;
         if(find(route.begin(), route.end(), elist)==route.end()){
             // not found in route 
             return 0;
