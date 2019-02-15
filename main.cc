@@ -59,6 +59,8 @@ int main(int argc, char** argv){
             if(nm->connected_d(odds[i]->name, odds[j]->name) && odds[i]->name != odds[j]->name){
                 // not connect, create new link to these 2 point
                 nm->connect(odds[i]->name, odds[j]->name);
+                // set user-defined tag
+                nm->get_edge(odds[i]->name, odds[j]->name)->tag = "fake";
                 ef[odds[i]->name].push_back(nm->get_edge(odds[i]->name, odds[j]->name));
                 eb[odds[j]->name].push_back(nm->get_edge(odds[i]->name, odds[j]->name));
                 cout << "New link: " << odds[i]->name << "->" << odds[j]->name << endl;
@@ -69,18 +71,37 @@ int main(int argc, char** argv){
     // run 
     dfs("a", "a");
 
+    // traversal 
+    Path *path = new Path();
     for(int i=0;i<route.size();i++){
-        cout << route[i]->head->name << "--->" << route[i]->tail->name << endl;
+        // cout << route[i]->head->name << "--->" << route[i]->tail->name << "(" << route[i]->tag << ")" << endl;
+        if(route[i]->tag=="fake"){
+            nm->disconnect(route[i]->head->name, route[i]->tail->name);
+            nm->print_all_e();
+            path->append(nm->elist);
+            // fetch the alterative path
+            vector<vector<Edge *>> alter = path->find_paths(route[i]->head->name, route[i]->tail->name);
+            // erase
+            route.erase(route.begin()+i);
+            // FIXME: need to find shortest among alter[x]
+            for(int x=0; x<alter.size(); x++){
+                for(int y=0; y<alter[x].size(); y++){
+                    Edge *ne = new Edge(alter[x][y]);
+                    ne->tag = "Alter";
+                    route.insert(route.begin()+i, ne);
+                }
+                // FIXME: need to find the shortest
+                break;
+            }
+            // because current edge has been replaced
+            i--;
+            path->debug();
+        }
     }
 
-    /*
-    Path *path = new Path();
-    path->append(nm->elist);
-    //path->find_paths("b", "e");
-    //path->debug();
-    path->find_paths("e", "b");
-    path->debug();
-    */
+    for(int i=0;i<route.size();i++){
+        cout << route[i]->head->name << "--->" << route[i]->tail->name << "(" << route[i]->tag << ")" << endl;
+    }
 
     return 0;
 }
@@ -108,7 +129,7 @@ int dfs(string src, string sink)
                 //cout << "END" << endl;
                 return 0; // END
             }
-            cout << ef[src].at(i)->head->name << "->" << ef[src].at(i)->tail->name << endl;
+            // cout << ef[src].at(i)->head->name << "->" << ef[src].at(i)->tail->name << endl;
             // if END, then return; else: keep going
             if(dfs(ef[src].at(i)->tail->name, sink)){
                 // pop out the error one
