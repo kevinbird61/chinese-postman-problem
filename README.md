@@ -24,3 +24,14 @@ $ ./main.out
 * Connectivities - chapter 4
 * Dijkstra
 * Eulerian circuit
+
+## Description of Program
+
+1. If current graph is Eulerian ?
+    * Yes:  Find one of Eularian path/trail (shortest path) can solve chinese postman problem.
+    * No:   Goto next phase.
+2. If not Eulerian:
+    * Find all `odd` degree points, then using these points into a `complete graph`.
+    * Mapping those `new` edges of complete graph back to origin graph. (It will be some new edges)
+    * Now we have Eulerian, back to Step 1.
+3. After finding an Eulerian path/trail, if there have any `new` edges in this path/trail, then replace it with an alternative path in original graph. (Using `fake-mininet` API to give these `new` edges a "tag", and if detect this special tag, then replace it with an alternative.)
